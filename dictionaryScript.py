@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 
 
-alph = "abcdefghijklmnopqrstuvwxzy"
+alph = "abcdefghijklmnopqrstuvwxyz"
 
 count = 0
 
@@ -17,7 +17,7 @@ for letter in alph:
         word = entries.find('b').getText() # get the word itself
         pos = entries.find('i').getText() # get the part of speech
         cut = len(word) + len(pos) + 4 # calulate how much word and pos take up
-        define = entries.getText()[cut:] # cut that from the total sting to get definition
+        definition = entries.getText()[cut:] # cut that from the total sting to get definition
         #
         #
         #            DO what you need here
