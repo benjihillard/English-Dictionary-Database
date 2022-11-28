@@ -7,8 +7,18 @@ import os
 logger = logging.getLogger(__name__)
 
 class Word(Document):
-    word = fields.StringField(primary=True)
+    word = fields.StringField()
     definition = fields.ListField(default=[])
+    meta = {
+        'indexes': ['word']
+    }
+
+    @classmethod
+    def find_or_create(cls, word):
+        w = cls.objects(word=word).first()
+        if w is None:
+            w = Word(word=word)
+        return w
 
 def mongo_import(host, db, username, password, alph):
     mongoengine.connect(db=db, host=host, username=username, password=password)
@@ -21,10 +31,10 @@ def mongo_import(host, db, username, password, alph):
         elif previous.word != word:
             logger.info(f"Moving on to new word {word}...")
             previous.save()
-            previous = Word()
-            previous.word = word
+            previous = Word.find_or_create(word)
         logger.info(f"Adding definition for word {word}")
         previous.definition.append({ "pos": pos, "meaning": definition })
+    # save the last word before finishing
     if previous:
         previous.save()
 
